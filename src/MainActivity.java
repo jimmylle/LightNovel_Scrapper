@@ -12,7 +12,7 @@ public class MainActivity {
 
     public static void main(String[] args) {
         try {
-            File file = new File("C:\\Users\\jimmy\\Desktop\\test-v1-c1.doc");
+            File file = new File("C:\\Users\\jimmy\\IdeaProjects\\LightNovel\\test.txt");
 
             if (!file.exists()) {
                 file.createNewFile();
@@ -21,7 +21,7 @@ public class MainActivity {
                     "Light_novel_(English)";
             Writer writer = new BufferedWriter(new FileWriter(file));
             Document document = Jsoup.connect(url).get();
-            Elements elements = document.select("div#mw-pages a[title]");
+            Elements elements = document.select("div#mw-pages a[title^=m]");
 
             for (Element element: elements) {
                 String title = element.text();
