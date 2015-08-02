@@ -14,8 +14,8 @@ public class MainActivity {
     private static String url = "http://www.baka-tsuki.org/project/index.php?title=";
 
     public static void main(String[] args) {
-        listLightNovels();
-        //findSpecificLN("Moonlight_Sculptor");
+        //listLightNovels();
+        findSpecificLN("Moonlight_Sculptor");
     }
 
     public static void listLightNovels() {
