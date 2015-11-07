@@ -21,11 +21,13 @@ public class MainActivity {
     private static String api = "http://btapi-shadowys.rhcloud.com/api?title=";
 
     public static void main(String[] args) {
-        listLightNovels("mo");
-        findSpecificLNVolume("Moonlight_Sculptor", 2);
+        //listLightNovels("od");
+        //findSpecificLNVolume("Oda_Nobuna_no_Yabou", 2);
+        printChapterToFile("https://www.baka-tsuki.org/project/index.php?title=Oda_Nobuna_no_Yabou:Volume1_Chapter1","test1");
     }
 
     //Lists Lightnovels on BakaTsuki whom meet the search criteria
+    //Does not get from Webnovel section yet
     public static void listLightNovels(String search) {
         try {
             File file = new File("/Users/Jimmyle/Desktop/test.txt");
@@ -39,7 +41,6 @@ public class MainActivity {
                 title += "\r\n" + abs_url + "\r\n\r\n";
                 writer.write(title);
             }
-            writer.flush();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,7 +60,6 @@ public class MainActivity {
             JsonObject jsonObject = getJsonInfo(request);
             printVolumeNum(jsonObject, writer);
             printVolChapters(jsonObject, writer);
-            writer.flush();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,6 +77,7 @@ public class MainActivity {
         volume_num += "\r\n\r\n";
         try {
             writer.write(volume_num);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,13 +91,14 @@ public class MainActivity {
             for (int i = 0; i < jsonArray.size(); i++) {
                 jsonObject = jsonArray.get(i).getAsJsonObject();
                 result = jsonObject.get("title").toString();
-                result += "\r\n" + jsonObject.get("link").toString();
+                result += "\r\n" + getChapterURL(jsonObject);
                 if (i == jsonArray.size()-1) {
                     writer.write(result);
                     break;
                 }
                 writer.write(result + "\r\n\r\n");
             }
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,4 +119,28 @@ public class MainActivity {
         return jsonObject;
     }
 
+
+    private static String getChapterURL(JsonObject jsonObject) {
+        return (jsonObject.get("link").toString());
+    }
+
+    private static void printChapterToFile(String url, String filename) {
+        try {
+            File file = new File("/Users/Jimmyle/Desktop/" + filename + ".txt");
+            Writer writer = new BufferedWriter(new FileWriter(file));
+            Document document = Jsoup.connect(url).get();
+            Elements elements = document.select("p");
+
+            for (Element element : elements) {
+                String text = element.text();
+                text += "\r\n";
+                writer.write(text);
+            }
+            //If i don't close(), text gets cut off because it doesn't write remaining text
+            //unless it flushes the rest of it out. close() automatically calls flush.
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
