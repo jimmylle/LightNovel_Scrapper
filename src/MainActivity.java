@@ -18,20 +18,17 @@ import java.net.URL;
 public class MainActivity {
 
     private static String url = "http://www.baka-tsuki.org/project/index.php?title=Category:Light_novel_(English)";
-    private static String api = "https://baka-tsuki-api.herokuapp.com/api?title=";
+    private static String api = "http://btapi-shadowys.rhcloud.com/api?title=";
 
     public static void main(String[] args) {
-        //listLightNovels("mo");
+        listLightNovels("mo");
         findSpecificLNVolume("Moonlight_Sculptor", 2);
     }
 
     //Lists Lightnovels on BakaTsuki whom meet the search criteria
     public static void listLightNovels(String search) {
         try {
-            File file = new File("C:\\Users\\jimmy\\Desktop\\test.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            File file = new File("/Users/Jimmyle/Desktop/test.txt");
             Writer writer = new BufferedWriter(new FileWriter(file));
             Document document = Jsoup.connect(url).get();
             Elements elements = document.select("div#mw-pages a[title^=" + search + "]");
@@ -52,10 +49,7 @@ public class MainActivity {
     //Lists Info of LightNovel's chosen volume
     private static void findSpecificLNVolume(String title, int volume) {
         try {
-            File file = new File("C:\\Users\\jimmy\\Desktop\\test.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            File file = new File("/Users/Jimmyle/Desktop/test.txt");
             //Creates new writer to write to file chosen
             Writer writer = new BufferedWriter(new FileWriter(file));
             //Connect to the URL
