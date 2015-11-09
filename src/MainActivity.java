@@ -2,18 +2,46 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by jimmy on 7/31/2015.
- * Testing Stuff
+ Created by jimmy on 7/31/2015.
+ Testing Stuff Ver. 1.2
+
+ This is LightNovel_Scrapper a program that scrapes text from LightNovels
+ from BakaTsuki and converts them into a PDF for reading.
+ Copyright (C) 2015 Jimmy Le
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 public class MainActivity {
 
@@ -23,11 +51,12 @@ public class MainActivity {
     public static void main(String[] args) {
         //listLightNovels("od");
         //findSpecificLNVolume("Oda_Nobuna_no_Yabou", 2);
-        printChapterToFile("https://www.baka-tsuki.org/project/index.php?title=Oda_Nobuna_no_Yabou:Volume1_Chapter1","test1");
+        //printChapterToFile("https://www.baka-tsuki.org/project/index.php?title=Oda_Nobuna_no_Yabou:Volume1_Chapter1","test1");
+        printPDF("https://www.baka-tsuki.org/project/index.php?title=Hagure_Yuusha_no_Aesthetica:Volume_1_Chapter_1","PDFTest.pdf");
     }
 
     //Lists Lightnovels on BakaTsuki whom meet the search criteria
-    //Does not get from Webnovel section yet
+    //Does not get from Webnovel section
     public static void listLightNovels(String search) {
         try {
             File file = new File("/Users/Jimmyle/Desktop/test.txt");
@@ -142,5 +171,30 @@ public class MainActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void printPDF(String url, String filename) {
+        //Creates a PDF document
+        com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+        try {
+            //Gets document from website, different from the PDF document
+            Document documentURL = Jsoup.connect(url).get();
+            //Html selectors from various website hosters, doesn't work for WuxiaWorld
+            Elements elements = documentURL.select(".firstHeading, #mw-content-text p, #mw-content-text > h2, #mw-content-text h3, .cover span," +
+                    " .entry-content p, .entry-content strong");
+            documentURL.select("[id^=Translator], #mw-content-text a[href], .mw-editsection-bracket").remove();
+            PdfWriter.getInstance(document, new FileOutputStream(filename));
+            document.open();
+            //Goes through and adds each line of text from website to pdf
+            for (Element element : elements) {
+                String text = element.text();
+                document.add(new Paragraph(text));
+            }
+            document.close();
+        } catch (DocumentException | IOException  e) {
+            e.printStackTrace();
+        }
+
+
     }
 }
