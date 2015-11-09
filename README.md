@@ -1,6 +1,11 @@
 Personal Project
 
 --------------------
+1.2
+Now creates a pdf directly from the chapter on the website, but only works for pages hosted
+directly on BakaTsuki and not other websites.
+Using iText Library under GNU Affero General Public License.
+
 1.1
 Now using a BakaTsuki api to get the info. 
 Also created a GUI to help but it's not finished.
